@@ -1,18 +1,34 @@
 <template>
   <div id="app">
-    <button @click="shuffle">shuffle</button>
-    <button @click="displayDeck = !displayDeck">hide/show</button>
     <div class="deck">
       <template v-if="displayDeck">
         <Card v-for="card in cards" 
           :key="card.id" 
           :value="card.rank" 
           :suit="card.suit" 
-          :flipped="card.flipped" 
+          :selected="card.selected" 
           @flip="onFlip(card)"
         />
       </template>
     </div>
+
+    <h1>Selected Cards</h1>
+    <Card v-for="card in selectedCards" 
+      :key="card.id" 
+      :value="card.rank" 
+      :suit="card.suit" 
+      :selected="card.selected" 
+      @flip="onFlip(card)"
+    />
+
+    <h1>Completed Cards</h1>
+    <Card v-for="card in completedCards" 
+      :key="card.id" 
+      :value="card.rank" 
+      :suit="card.suit" 
+      :selected="card.selected" 
+      @flip="onFlip(card)"
+    />
 
   </div>
 </template>
@@ -32,7 +48,15 @@ export default {
       ranks: ['10', 'J', 'Q', 'K', 'A'],
       suits: ['hearts', 'spades', 'hearts', 'spades'],
       cards: [],
-      displayDeck: true
+      displayDeck: true,
+    }
+  },
+  computed: {
+    selectedCards: function(){
+      return this.cards.filter(function(card){ return card.selected });
+    },
+    completedCards: function(){
+      return this.cards.filter(function(card){ return card.completed });
     }
   },
   created() {
@@ -47,7 +71,8 @@ export default {
             id: id,
             rank: this.ranks[r],
             suit: this.suits[s],
-            flipped: true
+            selected: false,
+            completed: false
           }
           this.cards.push(card);
           id++;
@@ -55,24 +80,8 @@ export default {
       }
     },
     onFlip(card) {
-      card.flipped = !card.flipped;
-    },
-    shuffle(){
-      // Fisher-Yates shuffle
-      let currentIndex = this.cards.length, temporaryValue, randomIndex;
-      while (0 !== currentIndex) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        temporaryValue = this.cards[currentIndex];
-        // this.cards[currentIndex] = this.cards[randomIndex];
-        this.$set(this.cards, currentIndex, this.cards[randomIndex])
-        this.cards[randomIndex] = temporaryValue;
-      }
-
-      return this.cards;
+      card.selected = !card.selected;
     }
-
   }
 }
 </script>
@@ -92,3 +101,19 @@ export default {
   flex-wrap: wrap;
 }
 </style>
+
+    // shuffle(){
+    //   // Fisher-Yates shuffle
+    //   let currentIndex = this.cards.length, temporaryValue, randomIndex;
+    //   while (0 !== currentIndex) {
+    //     randomIndex = Math.floor(Math.random() * currentIndex);
+    //     currentIndex -= 1;
+
+    //     temporaryValue = this.cards[currentIndex];
+    //     // this.cards[currentIndex] = this.cards[randomIndex];
+    //     this.$set(this.cards, currentIndex, this.cards[randomIndex])
+    //     this.cards[randomIndex] = temporaryValue;
+    //   }
+
+    //   return this.cards;
+    // }

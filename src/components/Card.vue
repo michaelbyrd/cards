@@ -1,6 +1,6 @@
 <template>
   <div class="card" @click="$emit('flip')">
-    <template v-if="flipped">
+    <template v-if="showCard">
       <span :class="suitToColor()">
         {{ value }}
         {{ suitMap[suit] }}
@@ -21,31 +21,23 @@ export default {
   props: {
     value: String,
     suit: String,
-    flipped: {
-      type: Boolean,
-      default: true
-    }
+    selected: { type: Boolean, default: false },
+    completed: { type: Boolean, default: false }
   },
   data: function(){
     return {
-      suitMap: {
-        hearts: '♥',
-        diamonds: '♦',
-        spades: '♠',
-        clubs: '♣',
-      },
+      suitMap: { hearts: '♥', diamonds: '♦', spades: '♠', clubs: '♣' },
+    }
+  },
+  computed: {
+    showCard: function(){
+      console.log(this.selected)
+      return (this.selected || this.completed);
     }
   },
   methods: {
     suitToColor(){
-      if(!this.flipped){
-        return 'black';
-      }
-      if(this.suit == 'hearts' || this.suit == 'diamonds'){
-        return 'red';
-      } else {
-        return 'black';
-      }
+      return (this.suit == 'hearts' || this.suit == 'diamonds') ? 'red' : 'black';
     }
   }
 
