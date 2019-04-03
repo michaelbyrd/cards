@@ -1,12 +1,19 @@
 <template>
   <div id="app">
+    <button @click="shuffle">shuffle</button>
+    <button @click="displayDeck = !displayDeck">hide/show</button>
     <div class="deck">
-      <div v-for="card in cards" :key="card.id">
-        <Card :value="card.rank" :suit="card.suit" />
-      </div>
+      <template v-if="displayDeck">
+        <Card v-for="card in cards" 
+          :key="card.id" 
+          :value="card.rank" 
+          :suit="card.suit" 
+          :flipped="card.flipped" 
+          @flip="onFlip(card)"
+        />
+      </template>
     </div>
 
-    <button @click="shuffle">shuffle</button>
   </div>
 </template>
 
@@ -20,9 +27,12 @@ export default {
   },
   data: function() {
     return {
-      ranks: ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'],
-      suits: ['hearts', 'diamonds', 'spades', 'clubs'],
-      cards: []
+      // ranks: ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'],
+      // suits: ['hearts', 'diamonds', 'spades', 'clubs'],
+      ranks: ['10', 'J', 'Q', 'K', 'A'],
+      suits: ['hearts', 'spades', 'hearts', 'spades'],
+      cards: [],
+      displayDeck: true
     }
   },
   created() {
@@ -36,12 +46,16 @@ export default {
           let card = {
             id: id,
             rank: this.ranks[r],
-            suit: this.suits[s]
+            suit: this.suits[s],
+            flipped: true
           }
           this.cards.push(card);
           id++;
         }
       }
+    },
+    onFlip(card) {
+      card.flipped = !card.flipped;
     },
     shuffle(){
       // Fisher-Yates shuffle

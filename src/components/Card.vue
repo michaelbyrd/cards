@@ -1,7 +1,17 @@
 <template>
-  <div class="card" :class="suitToColor()">
-    {{ value }}
-    {{ suitMap[suit] }}
+  <div class="card" @click="$emit('flip')">
+    <template v-if="flipped">
+      <span :class="suitToColor()">
+        {{ value }}
+        {{ suitMap[suit] }}
+      </span>
+    </template>
+
+    <template v-else>
+      <span>
+        X
+      </span>
+    </template>
   </div>
 </template>
 
@@ -10,7 +20,11 @@ export default {
   name: 'Card',
   props: {
     value: String,
-    suit: String
+    suit: String,
+    flipped: {
+      type: Boolean,
+      default: true
+    }
   },
   data: function(){
     return {
@@ -19,15 +33,17 @@ export default {
         diamonds: '♦',
         spades: '♠',
         clubs: '♣',
-      }
+      },
     }
   },
   methods: {
     suitToColor(){
+      if(!this.flipped){
+        return 'black';
+      }
       if(this.suit == 'hearts' || this.suit == 'diamonds'){
         return 'red';
       } else {
-        console.log('here');
         return 'black';
       }
     }
@@ -45,6 +61,6 @@ export default {
 
   .red {
     color: darkred;
-    border-color: darkred;
+    /* border-color: darkred; */
   }
 </style>
