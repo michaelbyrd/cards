@@ -1,27 +1,44 @@
 <template>
   <div id="app">
     <h1>Remaining Sets: {{ remainingSetsCount }}</h1>
-    <h1>Remaining attempts: {{ numberOfTries }}</h1>
+    <h4>Remaining attempts: {{ numberOfTries }}</h4>
     <hr>
     <div class="deck">
-      <template v-if="displayDeck">
-        <Card v-for="card in cards" 
-          :key="card.id" 
-          :value="card.rank" 
-          :suit="card.suit" 
-          :selected="card.selected" 
-          :completed="card.completed"
-          @flip="onFlip(card)"
-        />
-      </template>
+      <Card v-for="card in cards" 
+        :key="card.id" 
+        :value="card.rank" 
+        :suit="card.suit" 
+        :selected="card.selected" 
+        :completed="card.completed"
+        @flip="onFlip(card)"
+      />
     </div>
 
+    <div v-if="gameOver">
+      <hr>
+      <div v-if="remainingSetsCount == 0">
+        !!!CONGRATULATIONS!!!!
+        <br>
+        <button @click="reset()">Play Again</button>
+      </div>
 
+      <div v-else>
+        <button @click="reset()">Try Again</button>
+      </div>
+      <hr>
+    </div>
   </div>
 </template>
 
 <script>
 import Card from './components/Card.vue'
+
+const NUM_TRIES = 5;
+const RANKS = ['10', 'J', 'Q', 'K', 'A'];
+const SUITS = ['hearts', 'spades', 'hearts', 'spades'];
+
+// const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'],
+// const SUITS = ['hearts', 'diamonds', 'spades', 'clubs'],
 
 export default {
   name: 'app',
@@ -30,13 +47,11 @@ export default {
   },
   data: function() {
     return {
-      // ranks: ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'],
-      // suits: ['hearts', 'diamonds', 'spades', 'clubs'],
-      ranks: ['10', 'J', 'Q', 'K', 'A'],
-      suits: ['hearts', 'spades', 'hearts', 'spades'],
+      ranks: RANKS,
+      suits: SUITS,
       cards: [],
       displayDeck: true,
-      numberOfTries: 5
+      numberOfTries: NUM_TRIES,
     }
   },
   computed: {
@@ -49,6 +64,9 @@ export default {
     remainingSetsCount: function(){
       return (this.cards.length - this.completedCards.length)/ 2;
     },
+    gameOver: function(){
+      return this.numberOfTries == 0 || this.remainingSetsCount == 0;
+    }
   },
   created() {
     this.initializeDeck();
@@ -58,7 +76,7 @@ export default {
       this.cards = [];
       this.initializeDeck();
       this.shuffle();
-      this.numberOfTries = 0;
+      this.numberOfTries = NUM_TRIES;
     },
     initializeDeck(){
       let id = 1;
@@ -77,7 +95,7 @@ export default {
       }
     },
     onFlip(card) {
-      if(card.completed) return 'early';
+      if(this.gameOver || card.completed) return 'early';
 
       if(this.selectedCards.length >= 2){
         this.selectedCards.forEach(card => {
@@ -101,9 +119,6 @@ export default {
         return true;
       } else {
         this.numberOfTries -= 1;
-        if(this.numberOfTries == 0){
-          this.reset();
-        }
         return false;
       }
     },
@@ -115,7 +130,6 @@ export default {
         currentIndex -= 1;
 
         temporaryValue = this.cards[currentIndex];
-        // this.cards[currentIndex] = this.cards[randomIndex];
         this.$set(this.cards, currentIndex, this.cards[randomIndex])
         this.cards[randomIndex] = temporaryValue;
       }
