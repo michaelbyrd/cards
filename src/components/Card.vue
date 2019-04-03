@@ -48,6 +48,7 @@ export default {
     border: 1px solid black;
     margin: .5em;
     width: 3em;
+    cursor: pointer;
   }
 
   .red {

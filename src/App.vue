@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1>Remaining Sets: {{ remainingSetsCount }}</h1>
+    <h1>Remaining Pairs: {{ remainingSetsCount }}</h1>
     <h4>Remaining attempts: {{ numberOfTries }}</h4>
     <hr>
     <div class="deck">
