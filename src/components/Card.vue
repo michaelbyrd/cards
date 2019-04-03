@@ -31,7 +31,6 @@ export default {
   },
   computed: {
     showCard: function(){
-      console.log(this.selected)
       return (this.selected || this.completed);
     }
   },

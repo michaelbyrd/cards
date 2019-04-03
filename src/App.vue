@@ -1,5 +1,7 @@
 <template>
   <div id="app">
+    <h1>Remaining Sets: {{ remainingSetsCount }}</h1>
+    <hr>
     <div class="deck">
       <template v-if="displayDeck">
         <Card v-for="card in cards" 
@@ -7,28 +9,12 @@
           :value="card.rank" 
           :suit="card.suit" 
           :selected="card.selected" 
+          :completed="card.completed"
           @flip="onFlip(card)"
         />
       </template>
     </div>
 
-    <h1>Selected Cards</h1>
-    <Card v-for="card in selectedCards" 
-      :key="card.id" 
-      :value="card.rank" 
-      :suit="card.suit" 
-      :selected="card.selected" 
-      @flip="onFlip(card)"
-    />
-
-    <h1>Completed Cards</h1>
-    <Card v-for="card in completedCards" 
-      :key="card.id" 
-      :value="card.rank" 
-      :suit="card.suit" 
-      :selected="card.selected" 
-      @flip="onFlip(card)"
-    />
 
   </div>
 </template>
@@ -57,14 +43,17 @@ export default {
     },
     completedCards: function(){
       return this.cards.filter(function(card){ return card.completed });
-    }
+    },
+    remainingSetsCount: function(){
+      return (this.cards.length - this.completedCards.length)/ 2;
+    },
   },
   created() {
     this.initializeDeck();
   },
   methods: {
     initializeDeck(){
-      let id=1;
+      let id = 1;
       for( let s = 0; s < this.suits.length; s++ ) {
         for( let r = 0; r < this.ranks.length; r++ ) {
           let card = {
@@ -80,7 +69,27 @@ export default {
       }
     },
     onFlip(card) {
+      if(card.completed) return 'early';
+
+      if(this.selectedCards.length >= 2){
+        this.selectedCards.forEach(card => {
+          card.selected = false;
+        });
+      }
+
       card.selected = !card.selected;
+
+      if(this.selectedCardsMatch()){
+        this.selectedCards.forEach(card => {
+          card.completed = true;
+        })
+      }
+    },
+    selectedCardsMatch(){
+      if(this.selectedCards.length <2 )
+        return false;
+
+      return (this.selectedCards[0].suit == this.selectedCards[1].suit) && (this.selectedCards[0].rank == this.selectedCards[1].rank)
     }
   }
 }
