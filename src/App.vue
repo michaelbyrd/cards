@@ -17,7 +17,7 @@
     <div v-if="gameOver">
       <hr>
       <div v-if="remainingSetsCount == 0">
-        !!!CONGRATULATIONS!!!!
+        !!!--CONGRATULATIONS--!!!
         <br>
         <button @click="reset()">Play Again</button>
       </div>
@@ -145,15 +145,25 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
 }
 
 .deck {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
+
+.card {
+  flex-basis: 15%;
+}
+
 button {
 	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -180,6 +190,7 @@ button {
 	text-decoration:none;
 	text-shadow:0px 1px 0px #ffffff;
 }
+
 button:hover {
 	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f6f6f6), color-stop(1, #ffffff));
 	background:-moz-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
@@ -190,9 +201,11 @@ button:hover {
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#ffffff',GradientType=0);
 	background-color:#f6f6f6;
 }
+
 button:active {
 	position:relative;
 	top:1px;
 }
+
 </style>
 
