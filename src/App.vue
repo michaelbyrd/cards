@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <h1>Remaining Sets: {{ remainingSetsCount }}</h1>
+    <h1>Remaining attempts: {{ numberOfTries }}</h1>
     <hr>
     <div class="deck">
       <template v-if="displayDeck">
@@ -35,6 +36,7 @@ export default {
       suits: ['hearts', 'spades', 'hearts', 'spades'],
       cards: [],
       displayDeck: true,
+      numberOfTries: 5
     }
   },
   computed: {
@@ -52,6 +54,12 @@ export default {
     this.initializeDeck();
   },
   methods: {
+    reset(){
+      this.cards = [];
+      this.initializeDeck();
+      this.shuffle();
+      this.numberOfTries = 0;
+    },
     initializeDeck(){
       let id = 1;
       for( let s = 0; s < this.suits.length; s++ ) {
@@ -89,7 +97,30 @@ export default {
       if(this.selectedCards.length <2 )
         return false;
 
-      return (this.selectedCards[0].suit == this.selectedCards[1].suit) && (this.selectedCards[0].rank == this.selectedCards[1].rank)
+      if(this.selectedCards[0].suit == this.selectedCards[1].suit && this.selectedCards[0].rank == this.selectedCards[1].rank){
+        return true;
+      } else {
+        this.numberOfTries -= 1;
+        if(this.numberOfTries == 0){
+          this.reset();
+        }
+        return false;
+      }
+    },
+    shuffle(){
+      // Fisher-Yates shuffle
+      let currentIndex = this.cards.length, temporaryValue, randomIndex;
+      while (0 !== currentIndex) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        temporaryValue = this.cards[currentIndex];
+        // this.cards[currentIndex] = this.cards[randomIndex];
+        this.$set(this.cards, currentIndex, this.cards[randomIndex])
+        this.cards[randomIndex] = temporaryValue;
+      }
+
+      return this.cards;
     }
   }
 }
@@ -111,18 +142,3 @@ export default {
 }
 </style>
 
-    // shuffle(){
-    //   // Fisher-Yates shuffle
-    //   let currentIndex = this.cards.length, temporaryValue, randomIndex;
-    //   while (0 !== currentIndex) {
-    //     randomIndex = Math.floor(Math.random() * currentIndex);
-    //     currentIndex -= 1;
-
-    //     temporaryValue = this.cards[currentIndex];
-    //     // this.cards[currentIndex] = this.cards[randomIndex];
-    //     this.$set(this.cards, currentIndex, this.cards[randomIndex])
-    //     this.cards[randomIndex] = temporaryValue;
-    //   }
-
-    //   return this.cards;
-    // }
